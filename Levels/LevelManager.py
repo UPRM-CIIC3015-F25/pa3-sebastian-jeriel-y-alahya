@@ -19,40 +19,84 @@ class LevelManager():
     # TODO (TASK 0) - Set up all levels and their corresponding sublevels.
     #   Each level should include a Small, Big, and Boss Blind, with Boss Blinds assigned unique names.
     #   Organize them in a dictionary structure where each key represents a level number.
-    def setUpLevels(self): # Sets up all levels and sublevels
-        self.levelsDict[1] = [SubLevel(Blind.SMALL, 1), SubLevel(Blind.BIG, 1), SubLevel(Blind.BOSS, 1, "The Water")]
-        self.levelsDict[2] = [SubLevel(Blind.SMALL, 2), SubLevel(Blind.BIG, 2), SubLevel(Blind.BOSS, 2, "The Mark")]
-        self.levelsDict[3] = [SubLevel(Blind.SMALL, 3), SubLevel(Blind.BIG, 3), SubLevel(Blind.BOSS, 3, "The House")]
-        self.levelsDict[4] = [SubLevel(Blind.SMALL, 4), SubLevel(Blind.BIG, 4), SubLevel(Blind.BOSS, 4, "The Hook")]
-        self.levelsDict[5] = [SubLevel(Blind.SMALL, 5), SubLevel(Blind.BIG, 5), SubLevel(Blind.BOSS, 5, "The Manacle")]
-        self.levelsDict[6] = [SubLevel(Blind.SMALL, 6), SubLevel(Blind.BIG, 6), SubLevel(Blind.BOSS, 6, "The Needle")]
+    def setUpLevels(self):  # Sets up all levels and sublevels
+        self.levelsDict[1] = [
+            SubLevel(Blind.SMALL, 1),
+            SubLevel(Blind.BIG, 1),
+            SubLevel(Blind.BOSS, 1, "The Water"),
+        ]
+        self.levelsDict[2] = [
+            SubLevel(Blind.SMALL, 2),
+            SubLevel(Blind.BIG, 2),
+            SubLevel(Blind.BOSS, 2, "The Mark"),
+        ]
+        self.levelsDict[3] = [
+            SubLevel(Blind.SMALL, 3),
+            SubLevel(Blind.BIG, 3),
+            SubLevel(Blind.BOSS, 3, "The House"),
+        ]
+        self.levelsDict[4] = [
+            SubLevel(Blind.SMALL, 4),
+            SubLevel(Blind.BIG, 4),
+            SubLevel(Blind.BOSS, 4, "The Hook"),
+        ]
+        self.levelsDict[5] = [
+            SubLevel(Blind.SMALL, 5),
+            SubLevel(Blind.BIG, 5),
+            SubLevel(Blind.BOSS, 5, "The Manacle"),
+        ]
+        self.levelsDict[6] = [
+            SubLevel(Blind.SMALL, 6),
+            SubLevel(Blind.BIG, 6),
+            SubLevel(Blind.BOSS, 6, "The Needle"),
+        ]
+
+
+    def next_unfinished_sublevel(self, index=0):
+        if index >= len(self.curLevel):
+            return None
+
+        if not self.curLevel[index].finished:
+            return self.curLevel[index]
+
+
+        return self.next_unfinished_sublevel(index + 1)
 
     def updateLevels(self):
         # Load sublevels list for the player's current ante
         self.curLevel = self.levelsDict[self.p.playerAnte]
-        # Pick the first unfinished sublevel as current
-        self.curSubLevel = None
-        for s in self.curLevel:
-            if not s.finished:
-                self.curSubLevel = s
-                break
-    
+        # Use the recursive helper to pick the first unfinished sublevel as current
+        self.curSubLevel = self.next_unfinished_sublevel()
+
     def update(self):
         if self.curSubLevel and not self.curSubLevel.finished:  # Check if current sublevel is finished
-            if self.p.roundScore >= self.curSubLevel.score:     # If player's round score meets or exceeds sublevel score requirement
+            if self.p.roundScore >= self.curSubLevel.score:  # If player's round score meets or exceeds sublevel score requirement
                 self.curSubLevel.finished = True
                 self.p.roundScore = 0
-                if self.next_unfinished_sublevel() is None:  # Check if all sublevels in the current ante are finished
+
+
+                next_sub = self.next_unfinished_sublevel()
+
+
+                if next_sub is None:
                     self.p.playerAnte += 1
-                    # If no more levels exist, set playerWins to True
+
+
                     if self.p.playerAnte not in self.levelsDict:
                         self.curLevel = []
                         self.curSubLevel = None
                         self.playerWins = True
                         return
+
+
                     self.updateLevels()
-                    self.curSubLevel = self.curLevel[0]
-                self.p.levelFinished = True  # Signal UI to open LevelSelectState
+                else:
+
+                    self.curSubLevel = next_sub
+
+
+                self.p.levelFinished = True
+
 
     # TODO (TASK 8) - Create a recursive function that finds the next unfinished sublevel.
     #   It should check each sublevel in order and return the first one that isn’t finished.
