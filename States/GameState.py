@@ -554,7 +554,34 @@ class GameState(State):
     #   with the ones after it. Depending on the mode, sort by rank first or suit first, swapping cards when needed
     #   until the entire hand is ordered correctly.
     def SortCards(self, sort_by: str = "suit"):
-        suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]         # Define the order of suits
+        suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]
+
+        # Turn hand (list of Card objects) into a mutable list
+        hand = self.hand
+
+        n = len(hand)
+
+        # Helper: return numeric values depending on mode
+        def card_key(card):
+            if sort_by == "rank":
+                # rank first, then suit
+                return (card.rank.value, suitOrder.index(card.suit))
+            else:
+                # suit first, then rank
+                return (suitOrder.index(card.suit), card.rank.value)
+
+        # === BASIC NESTED-LOOP SORT (like selection sort) ===
+        for i in range(n - 1):
+            for j in range(i + 1, n):
+                # compare tuples manually
+                key_i = card_key(hand[i])
+                key_j = card_key(hand[j])
+
+                # if j < i, swap
+                if key_j < key_i:
+                    hand[i], hand[j] = hand[j], hand[i]
+
+        # update card positions after sorting
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
     def checkHoverCards(self):
