@@ -823,6 +823,39 @@ class GameState(State):
             if getattr(self,"amountOfHands", 0) == 0:
                 procrastinate = True
             self.activated_jokers.add("802")
+        if "Sonic" in owned:
+            for card in self.cardsSelectedList:
+                if card.value == 7:
+                    hand_mult += 10
+            total_chips += 20
+            self.activated_jokers.add("Sonic")
+        if "Pikachu" in owned:
+            for card in self.cardsSelectedList:
+                if card.value == 10:
+                    total_chips += 40
+                    hand_mult += 6
+            self.activated_jokers.add("Pikachu")
+        if "Shadow" in owned:
+            values = [c.value for c in self.cardsSelectedList]
+            if len(values) != len(set(values)):
+                hand_mult += 15
+            self.activated_jokers.add("Shadow")
+        if "Link" in owned:
+            values = [c.value for c in self.cardsSelectedList]
+            if values == sorted(values):
+                hand_mult += 12
+                total_chips += 40
+            self.activated_jokers.add("Link")
+        if "Kirby" in owned:
+            unique_vals = len(set([c.value for c in self.cardsSelectedList]))
+            hand_mult += 2 * unique_vals
+            self.activated_jokers.add("Kirby")
+        if "Steve" in owned:
+            for card in self.cardsSelectedList:
+                if card.value % 2 == 0:
+                    total_chips += 4
+            self.activated_jokers.add("Steve")
+
 
         # commit modified player multiplier and chips
         self.playerInfo.playerMultiplier = hand_mult
