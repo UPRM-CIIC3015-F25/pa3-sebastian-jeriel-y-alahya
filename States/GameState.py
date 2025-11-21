@@ -534,8 +534,42 @@ class GameState(State):
     #     - Recursive calculation of the overkill bonus (based on how much score exceeds the target)
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
-    def calculate_gold_reward(self, playerInfo, stage=0):
-            return 0
+    def calculate_gold_reward(self, playerInfo, stage=0, base=0, bonus=0):
+        if stage == 0:
+            blind = playerInfo.levelManager.curSubLevel.blindType
+
+            if blind == "SMALL":
+                base = 4
+            elif blind == "BIG":
+                base = 8
+            elif blind == "BOSS":
+                base = 10
+            else:
+                base = 0
+
+            return self.calculate_gold_reward(playerInfo, 1, base, 0)
+
+        if stage == 1:
+            score = playerInfo.roundScore
+            place = playerInfo.levelManager.curSubLevel.score
+
+            if place > 0:
+                difference = score - place
+                ratio = difference / place
+                two_bonus = ratio * 5
+                if two_bonus < 0:
+                    two_bonus = 0
+                if two_bonus > 5:
+                    two_bonus = 5
+                bonus = two_bonus
+            else:
+                bonus = 0
+
+            return self.calculate_gold_reward(playerInfo, 2, base, bonus)
+
+        if stage == 2:
+            total = base + bonus
+            return total
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
         cardsDict.clear()
