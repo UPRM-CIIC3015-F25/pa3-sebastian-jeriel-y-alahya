@@ -833,7 +833,7 @@ class GameState(State):
             self.activated_jokers.add("Ogre")
         if "Straw Hat" in owned:
             total_chips += 100
-            total_chips -= 5 getattr(self, "handsPlayedThis Round",0)
+            total_chips -= 5 * getattr(self, "handsPlayedThis Round",0)
             self.activated_jokers.add("Straw Hat")
         if "Hog Rider" in owned:
             if hasattr(self, "isStraight") and self.isStraight(self.cardsSelectedList):
