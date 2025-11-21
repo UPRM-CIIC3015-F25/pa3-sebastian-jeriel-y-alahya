@@ -934,10 +934,10 @@ class GameState(State):
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
         return
 
-    card = self.selectedCards.pop(0)
-    if removeFromHand and card in self.hand:
-        self.hand.remove(card)
+        card = self.selectedCards.pop(0)
+        if removeFromHand and card in self.hand:
+            self.hand.remove(card)
 
-    self.discardCards(removeFromHand)
+        self.discardCards(removeFromHand)
 
 
