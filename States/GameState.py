@@ -537,7 +537,6 @@ class GameState(State):
     def calculate_gold_reward(self, playerInfo, stage=0, base=0, bonus=0):
         if stage == 0:
             blind = playerInfo.levelManager.curSubLevel.blindType
-
             if blind == "SMALL":
                 base = 4
             elif blind == "BIG":
@@ -546,13 +545,11 @@ class GameState(State):
                 base = 10
             else:
                 base = 0
-
             return self.calculate_gold_reward(playerInfo, 1, base, 0)
 
         if stage == 1:
             score = playerInfo.roundScore
             place = playerInfo.levelManager.curSubLevel.score
-
             if place > 0:
                 difference = score - place
                 ratio = difference / place
@@ -564,7 +561,6 @@ class GameState(State):
                 bonus = two_bonus
             else:
                 bonus = 0
-
             return self.calculate_gold_reward(playerInfo, 2, base, bonus)
 
         if stage == 2:
