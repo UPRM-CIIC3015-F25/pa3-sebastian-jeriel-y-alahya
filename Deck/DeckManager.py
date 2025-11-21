@@ -175,7 +175,13 @@ class DeckManager:
             "Hog Rider": 4,
             "? Block": 5,
             "Hogwarts": 6,
-            "802": 6
+            "802": 6,
+            "Sonic": 6,
+            "Pikachu": 6,
+            "Shadow": 7,
+            "Link": 7,
+            "Kirby": 6,
+            "Steve": 5
         }
 
         for name, image in jokerImages.items():
