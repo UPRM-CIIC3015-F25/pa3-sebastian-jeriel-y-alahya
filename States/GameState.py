@@ -826,7 +826,7 @@ class GameState(State):
             self.activated_jokers.add("Fibonacci")
         if "Gauntlet"in owned:
             total_chips += 250
-            hand_size =max(0,hand_size -2)
+            self.hand_size =max(0,self.hand_size -2)
             self.activated_jokers.add("Gauntlet")
         if "Ogre" in owned:
             hand_mult += 3 * len(self.playerInfo.jokersOwned)
