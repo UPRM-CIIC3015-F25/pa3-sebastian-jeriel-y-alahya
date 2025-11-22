@@ -951,7 +951,8 @@ class GameState(State):
 
             cards_to_draw = 8 - len(self.hand)
             if cards_to_draw > 0:
-                self.drawCards(cards_to_draw)
+                new_cards = State.deckManager.dealCards(self.deck, cards_to_draw)
+                self.hand.extend(new_cards)
 
             self.cardsSelectedList = []
             self.selectedCardIndices = []
@@ -968,6 +969,3 @@ class GameState(State):
 
         # Continue recursion
         self.discardCards(removeFromHand)
-
-
-
