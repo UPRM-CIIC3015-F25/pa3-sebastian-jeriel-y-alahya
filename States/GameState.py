@@ -1,5 +1,6 @@
 import pygame
 import random
+from Levels.SubLevel import (SubLevel)
 from States.Menus.DebugState import DebugState
 from States.Core.StateClass import State
 from Cards.Card import Suit, Rank
@@ -536,12 +537,12 @@ class GameState(State):
     #   Avoid any for/while loops — recursion alone must handle the repetition.
     def calculate_gold_reward(self, playerInfo, stage=0, base=0, bonus=0):
         if stage == 0:
-            blind = playerInfo.levelManager.curSubLevel.blindType
-            if blind == "SMALL":
+            blind = playerInfo.levelManager.curSubLevel.blind
+            if blind == blind.SMALL:
                 base = 4
-            elif blind == "BIG":
+            elif blind == blind.BIG:
                 base = 8
-            elif blind == "BOSS":
+            elif blind == blind.BOSS:
                 base = 10
             else:
                 base = 0
