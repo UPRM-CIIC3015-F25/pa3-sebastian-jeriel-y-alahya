@@ -584,7 +584,32 @@ class GameState(State):
     #   with the ones after it. Depending on the mode, sort by rank first or suit first, swapping cards when needed
     #   until the entire hand is ordered correctly.
     def SortCards(self, sort_by: str = "suit"):
-        suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]         # Define the order of suits
+        # Define the order of suits
+        suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]
+
+        hand = self.hand
+        n = len(hand)
+
+        # Helper that returns a comparison key depending on mode
+        def card_key(card):
+            if sort_by == "rank":
+                # Rank first, then suit as tiebreaker
+                return (card.rank.value, suitOrder.index(card.suit))
+            else:
+                # Suit first (using suitOrder), then rank as tiebreaker
+                return (suitOrder.index(card.suit), card.rank.value)
+
+        # Basic nested-loop sort (selection-style), no built-in sort methods
+        for i in range(n - 1):
+            for j in range(i + 1, n):
+                key_i = card_key(hand[i])
+                key_j = card_key(hand[j])
+
+                # If the j-th card should come before the i-th, swap them
+                if key_j < key_i:
+                    hand[i], hand[j] = hand[j], hand[i]
+
+        # Reposition cards after sorting
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
     def checkHoverCards(self):
@@ -592,7 +617,7 @@ class GameState(State):
         for card, rect in self.cards.items():
             if rect.collidepoint(mousePos):
                 break
-    
+
     def drawCardTooltip(self):
         mousePos = pygame.mouse.get_pos()
         for card, rect in self.cards.items():
@@ -622,7 +647,7 @@ class GameState(State):
                 break
     
     # -------- Play Hand Logic -----------
-    def playHand(self):
+    def playHand(self, hand_size=None):
         if self.playerInfo.amountOfHands == 0: # Check if last hand and failed the round
             target_score = self.playerInfo.levelManager.curSubLevel.score
             if self.playerInfo.roundScore < target_score:
@@ -921,23 +946,26 @@ class GameState(State):
     #   recursion finishes, reset card selections, clear any display text or tracking lists, and
     #   update the visual layout of the player's hand.
     def discardCards(self, removeFromHand: bool):
-        if len(self.selectedCards) == 0:
+        # BASE CASE — no cards selected
+        if len(self.cardsSelectedList) == 0:
 
             cards_to_draw = 8 - len(self.hand)
             if cards_to_draw > 0:
-                self.drawCards(cards_to_draw)
+                new_cards = State.deckManager.dealCards(self.deck, cards_to_draw)
+                self.hand.extend(new_cards)
 
-            self.selectedCards = []
+            self.cardsSelectedList = []
             self.selectedCardIndices = []
             self.playedHandNameList = []
 
-        self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
-        return
+            self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
+            return
 
-        card = self.selectedCards.pop(0)
+        # RECURSIVE CASE — remove one selected card
+        card = self.cardsSelectedList.pop(0)
+
         if removeFromHand and card in self.hand:
             self.hand.remove(card)
 
+        # Continue recursion
         self.discardCards(removeFromHand)
-
-
