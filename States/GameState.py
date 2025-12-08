@@ -836,82 +836,96 @@ class GameState(State):
         #       # Apply that Joker’s effect
         #       self.activated_jokers.add("joker card name")
         #   The last line ensures the Joker is visibly active and its effects are properly applied.
-        self.activated_jokers= set()
+        self.activated_jokers = set()
         procrastinate = False
 
         if "The Joker" in owned:
             hand_mult += 4
             self.activated_jokers.add("The Joker")
-        if "Micheal Myers" in owned:
-            hand_mult += random.randint(0,23)
-            self.activated_jokers.add("Micheal Myers")
+
+        if "Michael Myers" in owned:
+            hand_mult += random.randint(0, 23)
+            self.activated_jokers.add("Michael Myers")
+
         if "Fibonacci" in owned:
             for card in self.cardsSelectedList:
-                if card.value in [1,2,3,5,8]:
+                if card.rank.value in [1, 2, 3, 5, 8]:
                     hand_mult += 8
             self.activated_jokers.add("Fibonacci")
-        if "Gauntlet"in owned:
+
+        if "Gauntlet" in owned:
             total_chips += 250
-            self.hand_size =max(0,self.hand_size -2)
+            self.playerInfo.amountOfHands = max(0, self.playerInfo.amountOfHands - 2)
             self.activated_jokers.add("Gauntlet")
+
         if "Ogre" in owned:
-            hand_mult += 3 * len(self.playerInfo.jokersOwned)
+            hand_mult += 3 * len(self.playerJokers)
             self.activated_jokers.add("Ogre")
-        if "Straw Hat" in owned:
+
+        if "StrawHat" in owned:
             total_chips += 100
-            total_chips -= 5 * getattr(self, "handsPlayedThis Round",0)
-            self.activated_jokers.add("Straw Hat")
+            total_chips -= 5 * getattr(self.playerInfo, "handsPlayedThisRound", 0)
+            self.activated_jokers.add("StrawHat")
+
         if "Hog Rider" in owned:
-            if hasattr(self, "isStraight") and self.isStraight(self.cardsSelectedList):
+            if hand_name == "Straight":
                 total_chips += 100
             self.activated_jokers.add("Hog Rider")
+
         if "? Block" in owned:
             if len(self.cardsSelectedList) == 4:
                 total_chips += 4
-            self.activated_jokers.add("Block")
+            self.activated_jokers.add("? Block")
+
         if "Hogwarts" in owned:
             for card in self.cardsSelectedList:
-                if card.value == 1:
+                if card.rank.value == 1:
                     hand_mult += 4
                     total_chips += 20
-                self.activated_jokers.add("Hogwarts")
+            self.activated_jokers.add("Hogwarts")
+
         if "802" in owned:
-            if getattr(self,"amountOfHands", 0) == 0:
+            if self.playerInfo.amountOfHands == 0:
                 procrastinate = True
             self.activated_jokers.add("802")
+
         if "Sonic" in owned:
             for card in self.cardsSelectedList:
-                if card.value == 7:
+                if card.rank.value == 7:
                     hand_mult += 10
             total_chips += 20
             self.activated_jokers.add("Sonic")
+
         if "Pikachu" in owned:
             for card in self.cardsSelectedList:
-                if card.value == 10:
+                if card.rank.value == 10:
                     total_chips += 40
                     hand_mult += 6
             self.activated_jokers.add("Pikachu")
+
         if "Shadow" in owned:
-            values = [c.value for c in self.cardsSelectedList]
+            values = [c.rank.value for c in self.cardsSelectedList]
             if len(values) != len(set(values)):
                 hand_mult += 15
             self.activated_jokers.add("Shadow")
+
         if "Link" in owned:
-            values = [c.value for c in self.cardsSelectedList]
+            values = [c.rank.value for c in self.cardsSelectedList]
             if values == sorted(values):
                 hand_mult += 12
                 total_chips += 40
             self.activated_jokers.add("Link")
+
         if "Kirby" in owned:
-            unique_vals = len(set([c.value for c in self.cardsSelectedList]))
+            unique_vals = len(set([c.rank.value for c in self.cardsSelectedList]))
             hand_mult += 2 * unique_vals
             self.activated_jokers.add("Kirby")
+
         if "Steve" in owned:
             for card in self.cardsSelectedList:
-                if card.value % 2 == 0:
+                if card.rank.value % 2 == 0:
                     total_chips += 4
             self.activated_jokers.add("Steve")
-
 
         # commit modified player multiplier and chips
         self.playerInfo.playerMultiplier = hand_mult
