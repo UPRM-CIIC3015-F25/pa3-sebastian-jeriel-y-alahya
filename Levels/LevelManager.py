@@ -62,28 +62,17 @@ class LevelManager():
             if self.p.roundScore >= self.curSubLevel.score:  # If player's round score meets or exceeds sublevel score requirement
                 self.curSubLevel.finished = True
                 self.p.roundScore = 0
-
-
                 next_sub = self.next_unfinished_sublevel()
-
-
                 if next_sub is None:
                     self.p.playerAnte += 1
-
-
                     if self.p.playerAnte not in self.levelsDict:
                         self.curLevel = []
                         self.curSubLevel = None
                         self.playerWins = True
                         return
-
-
                     self.updateLevels()
                 else:
-
                     self.curSubLevel = next_sub
-
-
                 self.p.levelFinished = True
 
 

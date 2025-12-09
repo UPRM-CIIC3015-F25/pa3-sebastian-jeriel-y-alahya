@@ -94,10 +94,15 @@ class LevelSelectState(State):
 
                 self.playerInfo.handLimit = self.playerInfo.amountOfHands
                 self.playerInfo.discardLimit = self.playerInfo.amountOfDiscards
+
                 if boss == "The Water":
                     self.playerInfo.discardLimit = 0
                 elif boss == "The Manacle":
                     self.playerInfo.handLimit = max(1, self.playerInfo.handLimit - 1)
+
+                self.playerInfo.amountOfHands = self.playerInfo.handLimit
+                self.playerInfo.amountOfDiscards = self.playerInfo.discardLimit
+
                 self.playerInfo.roundScore = 0
 
                 # Set target score for the new sublevel
