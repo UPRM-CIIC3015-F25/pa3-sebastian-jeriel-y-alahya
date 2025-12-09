@@ -97,21 +97,23 @@ class ShopState(State):
     #   Each key should be the name of a hand (e.g., "Two Pair", "Straight"), and each value should be a dictionary
     #   containing its "chips", "multiplier", and "level" fields.
     #   Remember: the Sun upgrades all hands, while other planets upgrade only their specific one.
-    def activatePlanet(self, planet):
-        global HAND_SCORES
 
-        keys = HAND_SCORES.keys()
-        HAND_SCORES = {
-            "High Card": {"chips": 10, "multiplier": 1, "level": 1},
-            "One Pair": {"chips": 20, "multiplier": 1, "level": 1},
-            "Two Pair": {"chips": 30, "multiplier": 1, "level": 1},
-            "Three of a Kind": {"chips": 50, "multiplier": 1, "level": 1},
-            "Straight": {"chips": 75, "multiplier": 1, "level": 1},
-            "Flush": {"chips": 100, "multiplier": 1, "level": 1},
-            "Full House": {"chips": 150, "multiplier": 1, "level": 1},
-            "Four of a Kind": {"chips": 200, "multiplier": 1, "level": 1},
-            "Straight Flush": {"chips": 300, "multiplier": 1, "level": 1},
-        }
+    def activatePlanet(self, planet):
+
+        if planet.name == "Sun":
+            for hand in HAND_SCORES:
+                HAND_SCORES[hand]["level"] += 1
+                HAND_SCORES[hand]["chips"] += planet.chips
+                HAND_SCORES[hand]["multiplier"] += planet.mult
+        else:
+            desc = planet.description
+            hand_name = desc[:desc.index("hand")].replace("Increases ", "").strip()
+            for hand in HAND_SCORES:
+                if hand == hand_name:
+                    HAND_SCORES[hand]["level"] += 1
+                    HAND_SCORES[hand]["chips"] += planet.chips
+                    HAND_SCORES[hand]["multiplier"] += planet.mult
+                    break
 
     # ---------- Helpers ----------
     def _wrap_lines(self, text, font, max_width):

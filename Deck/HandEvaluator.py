@@ -18,46 +18,32 @@ def evaluate_hand(hand: list[Card]):
         rank_counts[card.rank.value] = rank_counts.get(card.rank.value, 0) + 1
         suit_counts[card.suit] = suit_counts.get(card.suit, 0) + 1
 
-
     flush_suit = None
     for suit, count in suit_counts.items():
         if count >= 5:
             flush_suit = suit
             break
 
-
     ranks = sorted(set(card.rank.value for card in hand))
-
-
     if 14 in ranks:
         ranks.append(1)
         ranks = sorted(set(ranks))
 
     straight_found = False
-    straight_high = None
-
-
     for i in range(len(ranks) - 4):
         if (ranks[i] + 1 == ranks[i+1] and
             ranks[i] + 2 == ranks[i+2] and
             ranks[i] + 3 == ranks[i+3] and
             ranks[i] + 4 == ranks[i+4]):
             straight_found = True
-            straight_high = ranks[i+4]
             break
 
-
     if flush_suit is not None:
-        flush_cards = sorted(
-            [card.rank.value for card in hand if card.suit == flush_suit]
-        )
-
-
+        flush_cards = sorted([card.rank.value for card in hand if card.suit == flush_suit])
         flush_unique = sorted(set(flush_cards))
         if 14 in flush_unique:
             flush_unique.append(1)
             flush_unique = sorted(set(flush_unique))
-
         for i in range(len(flush_unique) - 4):
             if (flush_unique[i] + 1 == flush_unique[i+1] and
                 flush_unique[i] + 2 == flush_unique[i+2] and
@@ -65,38 +51,28 @@ def evaluate_hand(hand: list[Card]):
                 flush_unique[i] + 4 == flush_unique[i+4]):
                 return "Straight Flush"
 
-
     counts_sorted = sorted(rank_counts.values(), reverse=True)
-
 
     if counts_sorted[0] == 4:
         return "Four of a Kind"
 
-
-    if counts_sorted[0] == 3 and counts_sorted[1] >= 2:
+    second_count = counts_sorted[1] if len(counts_sorted) > 1 else 0
+    if counts_sorted[0] == 3 and second_count >= 2:
         return "Full House"
-
 
     if flush_suit is not None:
         return "Flush"
 
-
     if straight_found:
         return "Straight"
 
-
-    if counts_sorted[0] == 3:
+    if len(counts_sorted) > 0 and counts_sorted[0] == 3:
         return "Three of a Kind"
 
-    if 2 in counts_sorted:
-        if counts_sorted.count(2) == 2:
-            return "Two Pair"
-        else:
-            return "One Pair"
+    if counts_sorted.count(2) == 2:
+        return "Two Pair"
 
-
-    if counts_sorted[0] == 2:
+    if counts_sorted.count(2) == 1:
         return "One Pair"
-
 
     return "High Card"

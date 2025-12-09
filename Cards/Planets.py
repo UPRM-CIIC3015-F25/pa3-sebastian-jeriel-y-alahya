@@ -76,7 +76,7 @@ PLANETS = {
         "Uranus",
         "Increases Full House hand value by +3 multiplier and +35 chips",
         3,
-        40,
+        35,
         4
 
     ),
